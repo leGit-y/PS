@@ -1,60 +1,49 @@
 import java.io.*;
-import java.util.*;
+import java.util.StringTokenizer;
 
+// 자바스럽게 잘 푼 풀이
 public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
         int N = Integer.parseInt(br.readLine());
-        List<Integer>[] graph = new List[N+1];
-        for (int i = 1; i <= N; i++) {
-            graph[i] = new ArrayList<>();
-        }
-
-        int[] indegree = new int[N+1];
-        int[] time = new int[N+1];
+        Job[] job = new Job[N+1];
         for (int i = 1; i <= N; i++) {
             StringTokenizer st = new StringTokenizer(br.readLine());
             int t = Integer.parseInt(st.nextToken());
             int M = Integer.parseInt(st.nextToken());
-            indegree[i] = M;
-            time[i] = t;
+            int[] preJob = new int[M];
             for (int j = 0; j < M; j++) {
-                int prev = Integer.parseInt(st.nextToken());
-                graph[prev].add(i);
+                preJob[j] = Integer.parseInt(st.nextToken());
             }
+            job[i] = new Job(t, preJob);
         }
 
-        Deque<Integer> q = new ArrayDeque<>();
-        int[] result = new int[N+1];
+        int[] dp = new int[N+1];
         for (int i = 1; i <= N; i++) {
-            result[i] = time[i];
-            if(indegree[i] == 0){
-                q.add(i);
+            Job cur = job[i];
+            int max = 0;
+            for(int prev : cur.preJobs){
+                max = Math.max(max, dp[prev]);
             }
-        }
-
-        while (!q.isEmpty()) {
-            int prev = q.poll();
-            for(int next: graph[prev]){
-                result[next] = Math.max(result[next], result[prev] + time[next]);
-                indegree[next]--;
-                if(indegree[next] == 0){
-                    q.add(next);
-                }
-            }
-
+            dp[i] = cur.time + max;
         }
 
         int answer = 0;
-        for(int i : result){
-            answer = Math.max(answer, i);
+        for (int i = 1; i <= N; i++) {
+            answer = Math.max(answer, dp[i]);
         }
+        System.out.println(answer);
+    }
 
-        bw.write(answer+"\n");
-        bw.flush();
+    private static class Job{
+        int time;
+        int[] preJobs;
 
-
+        public Job(int time, int[] preJobs) {
+            this.time = time;
+            this.preJobs = preJobs;
+        }
     }
 }
