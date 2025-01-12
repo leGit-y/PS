@@ -1,76 +1,62 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
- 
+import java.io.*;
+import java.util.*;
+
 public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        StringTokenizer st;
- 
+
         int N = Integer.parseInt(br.readLine());
-        ArrayList<ArrayList<Integer>> a = new ArrayList<>();
- 
-        for (int i = 0; i <= N; i++) {
-            a.add(new ArrayList<>());
-        }
- 
-        int[] indegree = new int[N + 1]; 
-        int[] times = new int[N + 1]; 
- 
+
+        // input
+        List<Integer>[] building = new List[N+1];
         for (int i = 1; i <= N; i++) {
-            st = new StringTokenizer(br.readLine());
-            times[i] = Integer.parseInt(st.nextToken());
-            while (true) {
+            building[i] = new ArrayList<>();
+        }
+        int[] indegree = new int[N+1];
+        int[] time = new int[N+1];
+        for (int i = 1; i <= N; i++) {
+            
+            StringTokenizer st = new StringTokenizer(br.readLine());
+
+            int t = Integer.parseInt(st.nextToken());
+            time[i] = t;
+            while(st.hasMoreTokens()){
                 int num = Integer.parseInt(st.nextToken());
-                if (num == -1) {
-                    break;
-                }
-                a.get(num).add(i);
+                if(num == -1) break;
+                building[num].add(i);
                 indegree[i]++;
             }
         }
- 
-        String ans = topologicalSort(a, indegree, times, N);
- 
-        bw.write(ans + "\n");
-        bw.flush();
-        bw.close();
-        br.close();
-    }
-    
-    public static String topologicalSort(ArrayList<ArrayList<Integer>> a, int[] indegree, int[] times, int N) {
-        Queue<Integer> q = new LinkedList<>();
-        StringBuilder sb = new StringBuilder();
-        
+
+        // solution
+        Deque<Integer> q = new ArrayDeque<>();
+        int[] result = new int[N+1];
         for (int i = 1; i <= N; i++) {
-            if (indegree[i] == 0) {
+            result[i] = time[i];
+            if(indegree[i] == 0){
                 q.add(i);
             }
         }
-        
-        int[] result = new int[N + 1];
+
         while (!q.isEmpty()) {
-            int now = q.poll();
-            for (int next : a.get(now)) {
-                result[next] = Math.max(result[next], result[now] + times[now]);
+            int cur = q.poll();
+            for(int next: building[cur]){
+                result[next] = Math.max(result[next], result[cur] + time[next]);
                 indegree[next]--;
-                if (indegree[next] == 0) {
+                if(indegree[next] == 0){
                     q.add(next);
                 }
             }
+
         }
         
+        // output
         for (int i = 1; i <= N; i++) {
-            sb.append((result[i] + times[i]) + "\n");
+            bw.write(result[i]+"\n");
         }
- 
-        return sb.toString();
+        bw.flush();
+
     }
+
 }
