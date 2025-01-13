@@ -3,11 +3,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-
 public class Main {
     static int N;
     static char[] A;
-    static String answer = "";
     static List<String> answerArr;
     static boolean[] visited;
 
@@ -26,9 +24,9 @@ public class Main {
         }
 
         for (int i = 0; i < 10; i++) {
-            answer="";
             visited = new boolean[10];
-            dfs(i, 0);
+            visited[i] = true;
+            dfs(i+"", i, 0);
 
         }
 
@@ -37,9 +35,7 @@ public class Main {
 
     }
 
-    private static void dfs(int cur, int depth){
-        answer += cur;
-        visited[cur] = true;
+    private static void dfs(String answer, int cur, int depth){
 
         if(depth == N) {
             answerArr.add(answer);
@@ -52,9 +48,9 @@ public class Main {
             if(A[depth] == '>' && cur < i) continue;
 
             visited[i] = true;
-            dfs(i, depth+1);
-            answer = answer.substring(0,answer.length()-1);
+            dfs(answer+i, i, depth+1);
             visited[i] = false;
+
         }
 
     }
