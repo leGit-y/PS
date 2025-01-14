@@ -51,11 +51,9 @@ public class Main {
         Deque<Integer> q = new ArrayDeque<>();
 
         for (int i = 1; i <= N; i++) {
+            dp[i] = time[i];
             if(indegree[i] == 0)
                 q.offer(i);
-        }
-        for (int i = 1; i <= N; i++) {
-            dp[i] = time[i];
         }
 
         while(!q.isEmpty()){
