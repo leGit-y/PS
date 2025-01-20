@@ -1,46 +1,52 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
-    static int N,M;
-    static int[] arr;
-    static List<String> answer = new ArrayList<>();
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
+	static StringBuilder sb;
 
-        arr = new int[N];
+	static int N, M;
+	static int[] numbers, picks;
 
-        st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < N; i++) {
-            arr[i] = Integer.parseInt(st.nextToken());
-        }
-        Arrays.sort(arr);
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        dfs("", 0, 0);
-        
-        for (int i = 0; i < answer.size(); i++) {
-            bw.write(answer.get(i)+"\n");
-        }
-        bw.flush();
+		StringTokenizer st;
+		sb = new StringBuilder();
 
+		st = new StringTokenizer(br.readLine());
+		N = Integer.parseInt(st.nextToken());
+		M = Integer.parseInt(st.nextToken());
 
-    }
-    private static void dfs(String str, int idx, int depth){
-        if(depth == M){
-            answer.add(str);
-            return;
-        }
-        for (int i = idx; i < N; i++) {
-            dfs(str+arr[i]+" ", i+1, depth+1);
-        }
+		st = new StringTokenizer(br.readLine());
+		numbers = new int[N];
+		for (int i = 0; i < N; i++)
+			numbers[i] = Integer.parseInt(st.nextToken());
 
-    }
+		Arrays.sort(numbers);
+		picks = new int[M];
+		combination(0, 0);
+
+		bw.write(sb.toString());
+		bw.flush();
+
+		br.close();
+		bw.close();
+	}
+
+	static void combination(int depth, int start) {
+		if (depth == M) {
+			for (int pick : picks)
+				sb.append(pick).append(" ");
+
+			sb.append("\n");
+			return;
+		}
+
+		for (int i = start; i < N; i++) {
+			picks[depth] = numbers[i];
+			combination(depth + 1, i + 1);
+		}
+	}
 }
