@@ -35,6 +35,9 @@ public class Main {
     }
 
     private static void dfs(int idx, int depth, int v_cnt, int c_cnt) {
+        // 종료 조건: depth가 L에 도달하면 무조건 종료되게끔
+        // 그렇지않으면 answer[depth] 에서 depth가 L보다 큰 경우가 생겨
+        // ArrayIndexOutOfBounds 에러
         if (depth == L) {
             if (v_cnt >= 1 && c_cnt >= 2) {
                 sb.append(answer).append("\n"); // 배열 전체를 한 번에 추가
