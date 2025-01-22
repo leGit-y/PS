@@ -9,6 +9,7 @@ public class Main {
     static int L,C;
     static StringBuilder sb = new StringBuilder();
     static char[] arr;
+    static char[] answer;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -19,6 +20,7 @@ public class Main {
 
         arr = new char[C];
         visited = new boolean[C];
+        answer = new char[L];
 
         st = new StringTokenizer(br.readLine());
         for (int i = 0; i < C; i++) {
@@ -26,46 +28,36 @@ public class Main {
         }
         Arrays.sort(arr);
 
-        dfs("", 0, 0, 0, 0);
+        dfs( 0,0, 0, 0);
         System.out.println(sb);
+
 
     }
 
-    private static void dfs(String str, int idx, int depth, int v_cnt, int c_cnt){
-        if(depth == L && v_cnt >= 1 && c_cnt >= 2){
-            sb.append(str).append("\n");
+    private static void dfs(int idx, int depth, int v_cnt, int c_cnt) {
+        if (depth == L) {
+            if (v_cnt >= 1 && c_cnt >= 2) {
+                sb.append(answer).append("\n"); // 배열 전체를 한 번에 추가
+            }
             return;
         }
-        for (int i = idx; i < C; i++) {
-            if(visited[i]) continue;
 
-            boolean check = false;
+        for (int i = idx; i < C; i++) {
+            if (visited[i]) continue;
+
             visited[i] = true;
-            if(isVowel(arr[i])){
-                v_cnt++;
-                check=true;
+            answer[depth] = arr[i];
+
+            if (isVowel(arr[i])) {
+                dfs(i + 1, depth + 1, v_cnt + 1, c_cnt);
+            } else {
+                dfs(i + 1, depth + 1, v_cnt, c_cnt + 1);
             }
-            else{
-                c_cnt++;
-            }
-            dfs(str + arr[i], i+1,depth + 1, v_cnt, c_cnt);
             visited[i] = false;
-            if(check){
-                v_cnt--;
-            }
-            else{
-                c_cnt--;
-            }
         }
     }
 
     private static boolean isVowel(char c){
-        char[] vowels = {'a', 'e', 'i', 'o', 'u'};
-        for (int i = 0; i < vowels.length; i++) {
-            if (c == vowels[i]) {
-                return true;
-            }
-        }
-        return false;
+        return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
     }
 }
