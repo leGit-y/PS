@@ -1,97 +1,87 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
- 
+
 public class Main {
-    static int atoi(String str) {
-        return Integer.parseInt(str);
-    }
-    static String A[][];
-    static int dx[] = {0, 0, 1, -1};
-    static int dy[] = {1, -1, 0, 0};
-    static boolean visit[];
-    static int select[];
-    static int ans;
+    static boolean[] visited;
+    static String[][] arr;
+    static int answer = 0;
+    static int[] result;
+
     public static void main(String[] args) throws IOException {
-        input();
-        pro();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        arr = new String[5][5];
+        visited = new boolean[25];
+        result = new int[7];
+
+        for (int i = 0; i < 5; i++) {
+            arr[i] = br.readLine().split("");
+        }
+
+        dfs(0, 0, 0);
+
+        System.out.println(answer);
+
     }
- 
-    static void pro() {
-        dfs(0,0, 0);
- 
-        System.out.println(ans);
-    }
- 
-    static void dfs(int idx, int cnt,int cntS) {
-        if(cnt == 7){
-            if(cntS >= 4) {
-                ans += bfs();
+
+    private static void dfs(int depth, int idx, int cnt){
+
+        if(depth == 7){
+            if(cnt >= 4){
+                answer += isAdjacent();
             }
             return;
         }
- 
+
         for (int i = idx; i < 25; i++) {
-            if(visit[i]) continue;
- 
-            select[cnt] = i;
-            visit[i] = true;
-            if(A[i/5][i%5].equals("S")) dfs(i+1, cnt + 1, cntS + 1);
-            else dfs(i+1, cnt + 1, cntS);
-            visit[i] = false;
-            select[cnt] = -1;
+            int r = i / 5;
+            int c = i % 5;
+            if(visited[i]) continue;
+
+            visited[i] = true;
+            result[depth] = i;
+            if(arr[r][c].equals("S")) {
+                dfs(depth + 1, i + 1, cnt + 1);
+            }
+            else{
+                dfs(depth + 1, i + 1, cnt);
+            }
+            visited[i] = false;
         }
- 
     }
- 
-    static int bfs() {
+
+    static private int isAdjacent(){
+        int[] dx = {-1, 1, 0, 0};
+        int[] dy = {0, 0, -1, 1};
+        boolean[] f_visited = new boolean[25];
+
         Queue<Integer> q = new ArrayDeque<>();
-        boolean vis[][] = new boolean[5][5];
+        q.add(result[0]);
+        f_visited[result[0]] = true;
         int cnt = 1;
-        q.offer(select[0] / 5);
-        q.offer(select[0] % 5);
-        vis[select[0] / 5][select[0] % 5] = true;
- 
+
         while (!q.isEmpty()) {
-            int X = q.poll();
-            int Y = q.poll();
- 
+            int x = q.poll();
+            int r = x / 5;
+            int c = x % 5;
+
             for (int i = 0; i < 4; i++) {
-                int dX = X + dx[i];
-                int dY = Y + dy[i];
- 
-                if(!isRangeTrue(dX,dY)) continue;
-                if(vis[dX][dY]) continue;
-                if(!visit[dX*5+dY]) continue;
-                //dX*5+dY 번의 학생이 뽑혔는지 확인인
+                int nr = r + dx[i];
+                int nc = c + dy[i];
+
+                if(nr < 0 || nr >= 5 || nc < 0 || nc >= 5) continue;
+                int ni = nr * 5 + nc;
+                if(f_visited[ni]) continue;
+                if(!visited[ni]) continue;
+                f_visited[ni] = true;
+                q.add(ni);
                 cnt++;
-                q.offer(dX);
-                q.offer(dY);
-                vis[dX][dY] = true;
+                if(cnt == 7) return 1;
             }
         }
- 
-        if(cnt == 7) return 1;
- 
-        else return 0;
- 
-    }
- 
-    static boolean isRangeTrue(int x, int y) {
-        return x >= 0 && x < 5 && y >= 0 && y < 5;
-    }
- 
-    static void input() throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
- 
-        A = new String[5][5];
-        visit = new boolean[25];
-        select = new int[7];
- 
-        for (int i = 0; i < 5; i++) {
-            String str = br.readLine();
-            for (int j = 0; j < 5; j++) {
-                A[i][j] = str.charAt(j) + "";
-            }
-        }
+
+        return 0;
+
     }
 }
