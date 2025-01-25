@@ -56,13 +56,13 @@ public class Main {
         int[] dy = {0, 0, -1, 1};
         boolean[] f_visited = new boolean[25];
 
-        Queue<Integer> q = new ArrayDeque<>();
+        Deque<Integer> q = new ArrayDeque<>();
         q.add(result[0]);
         f_visited[result[0]] = true;
         int cnt = 1;
 
         while (!q.isEmpty()) {
-            int x = q.poll();
+            int x = q.removeLast();
             int r = x / 5;
             int c = x % 5;
 
