@@ -40,7 +40,7 @@ public class Main {
         int opDir = dir;
         // 왼쪽 바퀴들
         for (int i = wheelNum; i >= 1; i--) {
-            opDir = (opDir == 1 ? -1 : 1);
+            opDir = -opDir;
             if(wheel[i].get(6) != wheel[i-1].get(2)) {
                 list.add(new Rotate(i - 1, opDir));
             }
@@ -51,7 +51,7 @@ public class Main {
         opDir = dir;
         // 오른쪽 바퀴들
         for (int i = wheelNum; i < 3; i++) {
-            opDir = (opDir == 1 ? -1 : 1);
+            opDir = -opDir;
             if(wheel[i].get(2) != wheel[i+1].get(6)){
                 list.add(new Rotate(i + 1, opDir));
             }
