@@ -6,7 +6,6 @@ import java.util.StringTokenizer;
 public class Main {
 
     static String[][] arr;
-    static boolean[][] visited;
     static int max = 0;
     static int N,M;
 
@@ -20,13 +19,12 @@ public class Main {
         M = Integer.parseInt(st.nextToken());
 
         arr = new String[N][M];
-        visited = new boolean[N][M];
 
         for (int i = 0; i < N; i++) {
             arr[i] = br.readLine().split(" ");
         }
 
-        dfs( 0);
+        dfs(0);
         bw.write(max + "\n");
         bw.flush();
     }
@@ -41,25 +39,18 @@ public class Main {
 
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
-                if(visited[i][j]) continue;
                 if(arr[i][j].equals("1") || arr[i][j].equals("2")) continue;
-
-
-                visited[i][j] = true;
+                
                 arr[i][j] = "1";
                 dfs(depth + 1);
-                visited[i][j] = false;
                 arr[i][j] = "0";
-
             }
         }
-
     }
 
     private static int spreadVirus(){
         int[] dx = {-1, 1, 0, 0};
         int[] dy = {0, 0, -1, 1};
-        boolean[][] visited = new boolean[N][M];
         Deque<int[]> q = new ArrayDeque<>();
 
         // init
@@ -69,7 +60,6 @@ public class Main {
                 copyArr[i][j] = arr[i][j];
                 if (copyArr[i][j].equals("2")) {
                     q.add(new int[]{i,j});
-                    visited[i][j] = true;
                 }
             }
         }
@@ -82,11 +72,9 @@ public class Main {
                 int ny = now[1] + dy[i];
 
                 if(nx < 0 || nx >= N || ny < 0 || ny >= M) continue;
-                if(visited[nx][ny]) continue;
 
                 if(copyArr[nx][ny].equals("0")){
                     q.add(new int[]{nx, ny});
-                    visited[nx][ny] = true;
                     copyArr[nx][ny] = "2";
                 }
             }
@@ -105,8 +93,6 @@ public class Main {
                 }
             }
         }
-
         return cnt;
-
     }
 }
