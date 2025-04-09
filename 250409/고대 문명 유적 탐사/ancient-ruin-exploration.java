@@ -94,13 +94,13 @@ public class Main {
 
         for (int i = 0; i < cnt; i++) {
             // 90도 회전
-            int[] tmp = new int[]{arr[x-1][y+1],arr[x-1][y]};
-            newArr[x-1][y+1] = arr[x-1][y-1];
-            newArr[x-1][y] = arr[x][y-1];
-            newArr[x-1][y-1] = arr[x+1][y-1];
-            newArr[x][y-1] = arr[x+1][y];
-            newArr[x+1][y-1] = arr[x+1][y+1];
-            newArr[x+1][y] = arr[x][y+1];
+            int[] tmp = new int[]{newArr[x-1][y+1],newArr[x-1][y]};
+            newArr[x-1][y+1] = newArr[x-1][y-1];
+            newArr[x-1][y] = newArr[x][y-1];
+            newArr[x-1][y-1] = newArr[x+1][y-1];
+            newArr[x][y-1] = newArr[x+1][y];
+            newArr[x+1][y-1] = newArr[x+1][y+1];
+            newArr[x+1][y] = newArr[x][y+1];
 
             newArr[x+1][y+1] = tmp[0];
             newArr[x][y+1] = tmp[1];
