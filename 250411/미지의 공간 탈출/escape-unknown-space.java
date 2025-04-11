@@ -126,7 +126,7 @@ public class Main {
             return;
         }
 
-        int[][] spreadBoard = spreadStrangeTime(board, q);
+        int[][] spreadBoard = spreadStrangeTime(board, q, miji_ex, miji_ey);
 
         // 미지의 공간 bfs
         int answer = miji_bfs(board, spreadBoard, miji_sx, miji_sy, miji_ex, miji_ey, result);
@@ -154,7 +154,7 @@ public class Main {
         return null;
     }
 
-    private static int[][] spreadStrangeTime(int[][] board, Deque<StrangeTime> q){
+    private static int[][] spreadStrangeTime(int[][] board, Deque<StrangeTime> q, int ex, int ey){
         int[][] spreadBoard = new int[N][N];
         for (StrangeTime st : q) {
             spreadBoard[st.r][st.c] = 1;
@@ -185,6 +185,7 @@ public class Main {
                 next_r--;
             }
             if (!isInRange(next_r, next_c, N)) continue;
+            if(next_r == ex && next_c == ey) continue;
             if(board[next_r][next_c] == 1) continue;
             if(spreadBoard[next_r][next_c] != 0) continue;
 
@@ -227,11 +228,6 @@ public class Main {
 
                 visited[nx][ny] = visited[x][y] + 1;
                 q.add(new int[]{nx, ny});
-
-
-
-
-
 
             }
         }
