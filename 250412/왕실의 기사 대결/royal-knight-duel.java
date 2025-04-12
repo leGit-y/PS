@@ -5,6 +5,7 @@ public class Main {
 	static int[][] chess;
 	static int[][] chesswithKnight;
 	static int L;
+	static boolean check;
 
 	static Set<Integer> pushedIdx ;
 	static Knight[] knights;
@@ -47,13 +48,11 @@ public class Main {
 			Knight knight = new Knight(r, c, h, w, k);
 			knights[i+1] = knight;
 		
-
 			
 			locateKnight(i+1,r,c,h,w);
-					
 				
 		}
-		
+				
 		pushedIdx = new LinkedHashSet<>();
 		
 		// input order
@@ -64,21 +63,13 @@ public class Main {
 			
 			
 			// 사라진 기사에게 명령 내린 경우
-			if(knights[ii] == null) continue;
+			if(knights[ii].k <= 0) continue;
 			
 			
 			pushedIdx.clear();
+			
+			check = true;
 			willPush(knights[ii],d);
-			
-			boolean check = true;
-			
-			// 끝에 벽 잆으면 이동 불가
-			for(Integer idx : pushedIdx) {
-				if(!canMove(knights[idx], d)) {
-					check = false;
-					break;
-				}
-			}
 			if(!check) continue;
 			
 			List<Integer> list = new ArrayList<>(pushedIdx);
@@ -92,11 +83,8 @@ public class Main {
 				
 				// damage
 				knights[idx].damage();
-				if(knights[idx].k <= 0) 
-					knights[idx] = null; // 사라진 기사 처
 				
 			}
-			
 			
 			// move	(명령 받은 기사는 피해 입지 않음)
 			knights[ii].erase();
@@ -109,7 +97,7 @@ public class Main {
 		int answer = calculate(N);
 		
 		bw.write(answer+"\n");
-        bw.flush();
+		bw.flush();
 		
 	}
 	
@@ -126,27 +114,30 @@ public class Main {
 		int answer = 0;
 		
 		for(int i=1;i<=N;i++) {
-			if(knights[i] == null) continue;
+			if(knights[i].k <= 0) continue;
 			
 			answer += (knights[i].init_k - knights[i].k);
 			
-			
 		}
-		
 		return answer;
-		
 	}
 	
-private static void willPush(Knight moveKnight, int d) {
+	private static void willPush(Knight moveKnight, int d) {
+		if(!canMove(moveKnight, d)) {
+			check = false;
+			return;
+		}
 		
 		// 위
 		if(d==0) {
-			
+			int i = moveKnight.r-1;
 			for(int j = moveKnight.c; j < moveKnight.c + moveKnight.w; j++) {
-				int target = chesswithKnight[moveKnight.r-1][j];
-				if(target != 0)
+				
+				int target = chesswithKnight[i][j];
+				if(target != 0) {
 					pushedIdx.add(target);
 					willPush(knights[target], d);
+				}
 			}
 		}
 		
@@ -179,19 +170,16 @@ private static void willPush(Knight moveKnight, int d) {
 		
 		// 왼
 		else if(d==3) {
-			
+			int j = moveKnight.c-1;
 			for(int i = moveKnight.r; i < moveKnight.r + moveKnight.h; i++) {
-				int target = chesswithKnight[i][moveKnight.c-1];
+				int target = chesswithKnight[i][j];
 				if(target != 0) {
 					pushedIdx.add(target);
 					willPush(knights[target], d);
 				}
 			}
 		}
-		
-		
 		return;
-		
 	}
 	
 	private static boolean canMove(Knight moveKnight, int d) {
@@ -221,7 +209,7 @@ private static void willPush(Knight moveKnight, int d) {
 		// 아래
 		else if(d==2) {
 			int i = moveKnight.r + moveKnight.h;
-			if( i >= L) return false;
+			if(i >= L) return false;
 			
 			for(int j = moveKnight.c; j < moveKnight.c + moveKnight.w; j++) {
 				if(chess[i][j] == 2)
@@ -238,15 +226,9 @@ private static void willPush(Knight moveKnight, int d) {
 					return false;
 			}
 		}
-		
-		
 		return true;
 		
 	}
-	
-	
-
-	
 	
 	private static class Knight{
 		int init_k;
@@ -316,12 +298,7 @@ private static void willPush(Knight moveKnight, int d) {
 			}
 			
 			k -= cnt;
-			
-			
 		}
-		
-		
-	
 	}
 
 }
