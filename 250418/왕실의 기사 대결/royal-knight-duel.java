@@ -7,7 +7,7 @@ public class Main {
 	static int L;
 	static boolean check;
 
-	static Set<Integer> pushedIdx ;
+	static List<Integer> pushedIdx ;
 	static Knight[] knights;
 	
 	public static void main(String[] args) throws IOException {
@@ -53,7 +53,7 @@ public class Main {
 				
 		}
 				
-		pushedIdx = new LinkedHashSet<>();
+		pushedIdx = new LinkedList<>();
 		
 		// input order
 		for(int i=0;i<Q;i++) {
@@ -63,7 +63,7 @@ public class Main {
 			
 			
 			// 사라진 기사에게 명령 내린 경우
-			if(knights[ii].k <= 0) continue;
+			if(knights[ii] == null) continue;
 			
 			
 			pushedIdx.clear();
@@ -72,8 +72,7 @@ public class Main {
 			willPush(knights[ii],d);
 			if(!check) continue;
 			
-			List<Integer> list = new ArrayList<>(pushedIdx);
-			list.sort(new Comparator<Integer>() {
+			pushedIdx.sort(new Comparator<Integer>() {
 
 				@Override
 				public int compare(Integer o1, Integer o2) {
@@ -100,30 +99,38 @@ public class Main {
 					}
 					return 0;
 				}
-			});
-
-			for(int j=0;j<list.size();j++) {
-				int idx = list.get(j);
 				
+			});
+			for(int j=0;j<pushedIdx.size();j++) {
+				int idx = pushedIdx.get(j);
+
 				// move	
 				knights[idx].erase();
 				knights[idx].move(d);
 				knights[idx].mark(idx);
-				
+
+
+			}
+
+			for(int j=0;j<pushedIdx.size();j++) {
+				int idx = pushedIdx.get(j);
+
 				// damage
 				knights[idx].damage();
-				
+				if(knights[idx].k <= 0)
+					knights[idx] = null;
+
 			}
-			
+
 			// move	(명령 받은 기사는 피해 입지 않음)
 			knights[ii].erase();
 			knights[ii].move(d);
 			knights[ii].mark(ii);
-		
+
+
 		}
-		
+
 		int answer = calculate(N);
-		
 		bw.write(answer+"\n");
 		bw.flush();
 		
@@ -142,7 +149,7 @@ public class Main {
 		int answer = 0;
 		
 		for(int i=1;i<=N;i++) {
-			if(knights[i].k <= 0) continue;
+			if(knights[i] == null) continue;
 			
 			answer += (knights[i].init_k - knights[i].k);
 			
@@ -151,10 +158,13 @@ public class Main {
 	}
 	
 	private static void willPush(Knight moveKnight, int d) {
+		
 		if(!canMove(moveKnight, d)) {
 			check = false;
 			return;
 		}
+		
+		
 		
 		// 위
 		if(d==0) {
@@ -162,9 +172,10 @@ public class Main {
 			for(int j = moveKnight.c; j < moveKnight.c + moveKnight.w; j++) {
 				
 				int target = chesswithKnight[i][j];
-				if(target != 0) {
-					pushedIdx.add(target);
-					willPush(knights[target], d);
+				if(target != 0 && !pushedIdx.contains(target)) {
+					if(knights[target] == null) continue;
+				    pushedIdx.add(target);
+				    willPush(knights[target], d);
 				}
 			}
 		}
@@ -175,9 +186,10 @@ public class Main {
 			
 			for(int i = moveKnight.r; i < moveKnight.r + moveKnight.h; i++) {
 				int target = chesswithKnight[i][j];
-				if(target != 0) {
-					pushedIdx.add(target);
-					willPush(knights[target], d);
+				if(target != 0 && !pushedIdx.contains(target)) {
+					if(knights[target] == null) continue;
+				    pushedIdx.add(target);
+				    willPush(knights[target], d);
 				}
 					
 			}
@@ -189,9 +201,10 @@ public class Main {
 			
 			for(int j = moveKnight.c; j < moveKnight.c + moveKnight.w; j++) {
 				int target = chesswithKnight[i][j];
-				if(target != 0) {
-					pushedIdx.add(target);
-					willPush(knights[target], d);
+				if(target != 0 && !pushedIdx.contains(target)) {
+					if(knights[target] == null) continue;
+				    pushedIdx.add(target);
+				    willPush(knights[target], d);
 				}
 			}
 		}
@@ -201,9 +214,10 @@ public class Main {
 			int j = moveKnight.c-1;
 			for(int i = moveKnight.r; i < moveKnight.r + moveKnight.h; i++) {
 				int target = chesswithKnight[i][j];
-				if(target != 0) {
-					pushedIdx.add(target);
-					willPush(knights[target], d);
+				if(target != 0 && !pushedIdx.contains(target)) {
+					if(knights[target] == null) continue;
+				    pushedIdx.add(target);
+				    willPush(knights[target], d);
 				}
 			}
 		}
@@ -211,6 +225,9 @@ public class Main {
 	}
 	
 	private static boolean canMove(Knight moveKnight, int d) {
+		
+		if(moveKnight == null) return false;
+		
 		
 		// 위
 		if(d==0) {
@@ -326,6 +343,7 @@ public class Main {
 			}
 			
 			k -= cnt;
+			
 		}
 	}
 
