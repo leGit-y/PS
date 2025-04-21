@@ -24,11 +24,7 @@ public class Main {
         }
 
         Arrays.sort(arr);
-        dfs( "",0);
-
-        for (String s : answer) {
-            bw.write(s+"\n");
-        }
+        dfs("",0);
 
         bw.flush();
         br.close();
@@ -38,11 +34,14 @@ public class Main {
 
     private static void dfs(String result, int depth) throws IOException {
         if(depth == M){
-            answer.add(result);
+            bw.write(result+"\n");
             return;
         }
-        for (int i = 0; i < N; i++) {
-            dfs(result+arr[i]+" ",depth + 1);
+        int prev=0;
+        for(int i=0;i<N;i++) {
+            if(prev==arr[i]) continue;
+            prev=arr[i];
+            dfs( result+arr[i]+" ",depth+1);
         }
     }
 
