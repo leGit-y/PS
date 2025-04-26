@@ -13,6 +13,8 @@ int dy[] = {0,0,-1,1};
 int dfs(int x, int y);
 
 int main(){
+    ios::sync_with_stdio(false); cin.tie(0);
+    
     cin >> n >> m;
 
     canvas.assign(n, vector<int>(m));
